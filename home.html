@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="home.css">
+
+
+
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="home.html">Exam guide</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="home.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="account.html">Account</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+  <!-- The surrounding HTML is left untouched by FirebaseUI.
+       Your app may use that space for branding, controls and other customizations.-->
+  <div id="firebaseui-auth-container"></div>
+
+    <div class="container">
+      <label for="classname">classname:</label>
+      <input type="text" id="classname" required />
+      <button id="createclass" class="button2 btn-2">Create Class</button>
+    </div>
+
+<div id="course">
+</div>
+<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+<!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+
+<!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-analytics.js"></script>
+
+<!-- Add Firebase products that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBZgd88EEZMba3VfD_Fw-Ilacmc5A5B5tc",
+    authDomain: "exam-c6c5c.firebaseapp.com",
+    databaseURL: "https://exam-c6c5c.firebaseio.com",
+    projectId: "exam-c6c5c",
+    storageBucket: "exam-c6c5c.appspot.com",
+    messagingSenderId: "621166029045",
+    appId: "1:621166029045:web:341155f579ca87cb6d3dbc",
+    measurementId: "G-9ZS8QCTHV5"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  var uid = "a";
+  var db = firebase.firestore();
+</script>
+
+
+<script>
+// Initialize the FirebaseUI Widget using Firebase.
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+var uiConfig = {
+  callbacks: {
+    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+      // User successfully signed in.
+      // Return type determines whether we continue the redirect automatically
+      // or whether we leave that to developer to handle.
+      return true;
+    },
+    uiShown: function() {
+      // The widget is rendered.
+      // Hide the loader.
+      document.getElementById('loader').style.display = 'none';
+    }
+  },
+  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+  signInFlow: 'popup',
+  signInSuccessUrl: 'home.html',
+  signInOptions: [
+    // Leave the lines as is for the providers you want to offer your users.
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+  ],
+  // Terms of service url.
+  tosUrl: '<your-tos-url>',
+  // Privacy policy url.
+  privacyPolicyUrl: '<your-privacy-policy-url>'
+};
+
+// The start method will wait until the DOM is loaded.
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    var displayName = user.displayName;
+    var email = user.email;
+    var emailVerified = user.emailVerified;
+    var photoURL = user.photoURL;
+    var isAnonymous = user.isAnonymous;
+    uid = user.uid;
+    var providerData = user.providerData;
+    console.log(uid);
+    var docRef = db.collection("User").doc(uid);
+    docRef.get().then(function(doc) {
+        if (doc.exists) {
+            console.log("Document data:", doc.data());
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            db.collection("User").doc(uid).set({
+            })
+            .then(function() {
+                console.log("Document successfully written!");
+            })
+            .catch(function(error) {
+                console.error("Error writing document: ", error);
+            });
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+
+    getallcourses();
+
+    // ...
+  } else {
+    // User is signed out.
+    // ...
+    ui.start('#firebaseui-auth-container', uiConfig);
+  }
+});
+
+function createclass(){
+var classname = document.getElementById('classname').value;
+
+var docRef = db.collection("User").doc(uid);
+
+
+docRef.collection("Courses").doc(classname).get().then(function(doc) {
+    if (doc.exists) {
+        console.log("Document data:", doc.data());
+    } else {
+        // doc.data() will be undefined in this case
+        docRef.collection("Courses").doc(classname).set({})
+        .then(function() {
+          console.log("Document successfully written!");
+          console.log(classname.value);
+          var div = document.createElement("div");
+          var p = document.createElement("button");
+          p.innerHTML = "X";
+          p.id = classname;
+          p.addEventListener("click", deleteclass, false);
+          var x = document.createElement("BUTTON");
+          x.className = "button2 btn-2";
+          x.innerHTML = classname;
+          div.appendChild(p);
+          div.appendChild(x);
+          course.appendChild(div);
+          classname.value = "";
+        })
+        .catch(function(error) {
+          console.error("Error writing document: ", error);
+        });
+        console.log("No such document!");
+    }
+}).catch(function(error) {
+    console.log("Error getting document:", error);
+});
+
+
+
+
+
+
+
+
+      // var docRef = db.collection("User").doc(uid);
+
+
+}
+
+function deleteclass(e){
+  var id = e.target.id;
+  var docRef = db.collection("User").doc(uid);
+  docRef.collection("Courses").doc(id).delete().then(function() {
+    console.log("Document successfully deleted!");
+    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+}).catch(function(error) {
+    console.error("Error removing document: ", error);
+});
+}
+
+function getallcourses(){
+  var docRef = db.collection("User").doc(uid);
+  var course = document.getElementById('course');
+  course.innerHTML = "";
+  docRef.collection("Courses").get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          var div = document.createElement("div");
+          var p = document.createElement("button");
+          p.innerHTML = "X";
+          p.id = doc.id;
+          p.addEventListener("click", deleteclass, false);
+          var x = document.createElement("BUTTON");
+          x.className = "button2 btn-2";
+          x.innerHTML = doc.id;
+          div.appendChild(p);
+          div.appendChild(x);
+          course.appendChild(div);
+      });
+  });
+}
+
+
+
+
+
+
+
+document.getElementById('createclass').addEventListener("click", createclass, false);
+</script>
+
+
+</body>
+</html>
+
