@@ -27,7 +27,7 @@ body{
   padding: 7px;
   background: #292343;
 }
-.profile-name{
+.displayName{
   font-size: 25px;
   font-weight: bold;
   margin: 27px 0 0 120px;
@@ -69,3 +69,51 @@ button{
   color: #03bfbc;
 }
 
+
+
+
+/* GENERAL BUTTON STYLING */
+.button2,
+.button2::after {
+  -webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+.button2 {
+  background: none;
+  border: 3px solid #fff;
+  border-radius: 5px;
+  color: #fff;
+  display: block;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin: 1em auto;
+  padding: 2em 6em;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.button2::before,
+.button2::after {
+  background: #fff;
+  content: '';
+  position: absolute;
+  z-index: -1;
+}
+
+.button2:hover {
+  color: #2ecc71;
+}
+
+
+
+/* BUTTON 2 */
+.btn-2{}
+.btn-2::after {
+  height: 100%;
+  left: 0;
+  top: 0;
+  width: 0;
+}

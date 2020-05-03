@@ -14,46 +14,23 @@
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="home.html">Exam guide</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item ">
-          <a class="nav-link" href="home.html">Home</a>
-        </li>
-        <li class="nav-item">
-          <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form>
-        </li>
-        <li class="float-right nav-item active">
-            <a class="nav-link" href="account.html">Account</a>
-        </li>
-      </ul>
-
-    </div>
-  </nav>
+  <script src="./component/nav_account.js"></script>
   <!-- The surrounding HTML is left untouched by FirebaseUI.
        Your app may use that space for branding, controls and other customizations.-->
   <div id="firebaseui-auth-container"></div>
 
-
+<div id="afterlogin">
   <div class="container">
      <div class="cover-photo">
        <img src="https://engineering.wustl.edu/Profiles/PublishingImages/Guerin_Guerin.jpg?RenditionID=6" class="profile">
      </div>
-     <div id="profile_name" class="profile-name"></div>
+     <div id="displayName" class="displayName"></div>
      <p id="email"></p>
      <p class="about"></p>
      <button class="msg-btn">Message</button>
      <button class="follow-btn">Following</button>
    </div>
-
+</div>
 
 <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
 
@@ -70,80 +47,24 @@
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
 
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyBZgd88EEZMba3VfD_Fw-Ilacmc5A5B5tc",
-    authDomain: "exam-c6c5c.firebaseapp.com",
-    databaseURL: "https://exam-c6c5c.firebaseio.com",
-    projectId: "exam-c6c5c",
-    storageBucket: "exam-c6c5c.appspot.com",
-    messagingSenderId: "621166029045",
-    appId: "1:621166029045:web:341155f579ca87cb6d3dbc",
-    measurementId: "G-9ZS8QCTHV5"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script>
+<script src="utils/app.js"></script>
 
 
 <script>
-// Initialize the FirebaseUI Widget using Firebase.
-var ui = new firebaseui.auth.AuthUI(firebase.auth());
-var uiConfig = {
-  callbacks: {
-    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-      // User successfully signed in.
-      // Return type determines whether we continue the redirect automatically
-      // or whether we leave that to developer to handle.
-      return true;
-    },
-    uiShown: function() {
-      // The widget is rendered.
-      // Hide the loader.
-      document.getElementById('loader').style.display = 'none';
-    }
-  },
-  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-  signInFlow: 'popup',
-  signInSuccessUrl: 'home.html',
-  signInOptions: [
-    // Leave the lines as is for the providers you want to offer your users.
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.EmailAuthProvider.PROVIDER_ID,
-  ],
-  // Terms of service url.
-  tosUrl: '<your-tos-url>',
-  // Privacy policy url.
-  privacyPolicyUrl: '<your-privacy-policy-url>'
-};
 
-// The start method will wait until the DOM is loaded.
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    // User is signed in.
-    var displayName = user.displayName;
-    var email = user.email;
-    var emailVerified = user.emailVerified;
-    var photoURL = user.photoURL;
-    var isAnonymous = user.isAnonymous;
-    var uid = user.uid;
-    var providerData = user.providerData;
-    console.log(email);
-    document.getElementById("profile_name").innerHTML = displayName;
-    document.getElementById("email").innerHTML = email;
-    // ...
-  } else {
-    // User is signed out.
-    // ...
-    ui.start('#firebaseui-auth-container', uiConfig);
-  }
-});
-
-
-
+const user = localStorage.getItem("user");
+if(user){
+  document.getElementById("email").innerHTML = localStorage.getItem("email");
+  document.getElementById("displayName").innerHTML = localStorage.getItem("displayName");
+  
+}
+else{
+  document.write(`
+  <p>You need to Login in</p>
+  <button class="btn-2 button2" onclick="location.href='login.html'">Login/Signup</button>
+  `);
+  document.getElementById("afterlogin").style.display = "none";
+}
 
 </script>
 

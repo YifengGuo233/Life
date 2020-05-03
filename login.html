@@ -14,18 +14,9 @@
 </head>
 <body>
 
-  <script src="./component/nav_home.js"></script>
-
   <!-- The surrounding HTML is left untouched by FirebaseUI.
        Your app may use that space for branding, controls and other customizations.-->
   <div id="firebaseui-auth-container"></div>
-
-  <div id="afterlogin">
-    <script src="./component/createclass.js"></script>
-    <div id="course"></div>
-
-  </div>
-
 
 <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
 
@@ -79,7 +70,6 @@ var uiConfig = {
 // The start method will wait until the DOM is loaded.
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    document.getElementById('afterlogin').style.display = 'block';
     // User is signed in.
     var displayName = user.displayName;
     var email = user.email;
@@ -90,7 +80,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     var providerData = user.providerData;
     localStorage.setItem("user", user);
     localStorage.setItem("email", user.email);
-    localStorage.setItem("displayName", user.displayName);
     console.log(uid);
     var docRef = db.collection("User").doc(uid);
     docRef.get().then(function(doc) {
@@ -102,8 +91,6 @@ firebase.auth().onAuthStateChanged(function(user) {
             console.log("This user is NOT in our system");
             // If User Profile Structure not exsit, create one for it.
             db.collection("User").doc(uid).set({
-              name: displayName,
-              email: email
             })
             .then(function() {
                 console.log("Document successfully written!");
@@ -115,9 +102,9 @@ firebase.auth().onAuthStateChanged(function(user) {
     }).catch(function(error) {
         console.log("Error getting document:", error);
     });
-    display();
-    getallcourses();
     // ...
+    document.write(`<p>Already Login in</p>`);
+    window.location.href = "home.html";
   } else {
     // User is signed out.
     // ...
@@ -125,124 +112,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     ui.start('#firebaseui-auth-container', uiConfig);
   }
 });
-
-function display(){
-  console.log("display are called");
-  var cache = JSON.parse(localStorage.getItem("courses"));
-  var course = document.getElementById('course');
-  if(cache){
-    for (let [key, value] of Object.entries(cache)) {
-      console.log(`${key}: ${value}`);
-      var div = document.createElement("div");
-      var p = document.createElement("button");
-      p.innerHTML = "X";
-      p.id = key;
-      p.addEventListener("click", deleteclass, false);
-      var x = document.createElement("BUTTON");
-      x.className = "button2 btn-2";
-      x.innerHTML = key;
-      div.appendChild(p);
-      div.appendChild(x);
-      course.appendChild(div);
-    }
-}
-}
-
-function createclass(){
-var classname = document.getElementById('classname').value;
-document.getElementById('classname').value = "";
-var docRef = db.collection("User").doc(uid);
-
-
-docRef.collection("Courses").doc(classname).get().then(function(doc) {
-    if (doc.exists) {
-      console.log("这个文件已经存在了");
-        console.log("Document data:", doc.data());
-    } else {
-        // doc.data() will be undefined in this case
-        docRef.collection("Courses").doc(classname).set({})
-        .then(function() {
-          console.log("Document successfully written!");
-          var div = document.createElement("div");
-          var p = document.createElement("button");
-          p.innerHTML = "X";
-          p.id = classname;
-          p.addEventListener("click", deleteclass, false);
-          var x = document.createElement("BUTTON");
-          x.className = "button2 btn-2";
-          x.innerHTML = classname;
-          div.appendChild(p);
-          div.appendChild(x);
-          course.appendChild(div);
-          classname.value = "";
-          var cache = JSON.parse(localStorage.getItem("courses"));
-          cache[classname] = {};
-          localStorage.setItem("courses", JSON.stringify(cache));
-        })
-        .catch(function(error) {
-          console.error("Error writing document: ", error);
-        });
-        console.log("No such document!");
-    }
-}).catch(function(error) {
-    console.log("Error getting document:", error);
-});
-
-
-}
-
-function deleteclass(e){
-  var id = e.target.id;
-  var docRef = db.collection("User").doc(uid);
-  docRef.collection("Courses").doc(id).delete().then(function() {
-    console.log("Document successfully deleted!");
-    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-    var cache = JSON.parse(localStorage.getItem("courses"));
-    delete cache[id];
-    localStorage.setItem("courses", JSON.stringify(cache));
-}).catch(function(error) {
-    console.error("Error removing document: ", error);
-});
-}
-
-function getallcourses(){
-  var cache = {};
-  var docRef = db.collection("User").doc(uid);
-  var course = document.getElementById('course');
-  docRef.collection("Courses").get().then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-          
-          cache = JSON.parse(localStorage.getItem("courses"));
-          console.log(!cache)
-          if(!cache){
-            var temp = {};
-            console.log(doc.data());
-            temp[doc.id] = doc.data();
-            localStorage.setItem("courses", JSON.stringify(temp));
-            console.log(JSON.parse(localStorage.getItem("courses")));
-          }
-          else{
-            if(cache[doc.id]){
-              console.log("in cache");
-            }
-            else{
-              cache[doc.id] = doc.data();
-              localStorage.setItem("courses", JSON.stringify(cache));
-              console.log("not in cache")
-            }
-          }
-      });
-      console.log("courses");
-      
-      var temp = JSON.parse(localStorage.getItem("courses"));
-      console.log(temp)
-      
-  });
-  
-}
-
-
-document.getElementById('createclass').addEventListener("click", createclass, false);
 
 </script>
 
